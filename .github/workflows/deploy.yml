@@ -1,0 +1,142 @@
+name: CI/CD - Docker + ECR + Elastic Beanstalk + Slack
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+env:
+  AWS_REGION: eu-west-1
+  ECR_REPO: springboot-app
+  EB_APP: springboot-eb-application
+  EB_ENV: springboot-eb-application-dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13.1
+        env:
+          POSTGRES_DB: springbootdb
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Slack - Deployment Started
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": ":rocket: CI/CD pipeline triggered for `${{ github.repository }}` on `${{ github.ref_name }}`.\nDeployment to *Elastic Beanstalk* has started."
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Generate Build Number
+        id: build
+        run: echo "BUILD_NUMBER=$(date '+%Y%m%d%H%M%S')" >> $GITHUB_ENV
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build JAR
+        run: ./gradlew build -x test
+
+      - name: Run Tests
+        run: ./gradlew test
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: true
+          registry-type: private
+
+
+      - name: Build Docker Image
+        run: |
+          docker build -t $ECR_REPO:${{ env.BUILD_NUMBER }} .
+          docker tag $ECR_REPO:${{ env.BUILD_NUMBER }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/$ECR_REPO:${{ env.BUILD_NUMBER }}
+
+      - name: Push Docker Image to ECR
+        run: |
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/$ECR_REPO:${{ env.BUILD_NUMBER }}
+
+      - name: Create Dockerrun.aws.json
+        run: |
+          echo "{
+            \"AWSEBDockerrunVersion\": \"1\",
+            \"Image\": {
+              \"Name\": \"${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ env.BUILD_NUMBER }}\",
+              \"Update\": \"true\"
+            },
+            \"Ports\": [
+              {
+                \"ContainerPort\": 8080
+              }
+            ]
+          }" > Dockerrun.aws.json
+
+      - name: Zip Dockerrun for EB
+        run: zip deploy.zip Dockerrun.aws.json
+
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          application_name: ${{ env.EB_APP }}
+          environment_name: ${{ env.EB_ENV }}
+          deployment_package: deploy.zip
+          version_label: ${{ env.BUILD_NUMBER }}
+          version_description: "CI/CD deploy from GitHub - ${{ github.sha }}"
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ${{ env.AWS_REGION }}
+
+      - name: Slack - Deployment Success
+        if: success()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": ":white_check_mark: Deployment of *`${{ github.repository }}`* succeeded!\n:link: http://${{ env.EB_ENV }}.${{ env.AWS_REGION }}.elasticbeanstalk.com"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Slack - Deployment Failed
+        if: failure()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": ":x: Deployment of *`${{ github.repository }}`* failed. Please check the GitHub Actions logs."
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
