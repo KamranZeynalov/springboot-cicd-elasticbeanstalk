@@ -103,4 +103,15 @@ public class IpControllerTest extends BaseTest {
         Assertions.assertEquals(updatedIp.getEnv(), IP_DEV_ENV);
 
     }
+
+    @Test
+    public void testDeleteIpById()  throws Exception {
+
+        mockMvc.perform(delete("/api/v1/ip/{id}", IP_ID)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        Assertions.assertThrows(IpNotFoundException.class, () -> ipService.findIpById(IP_ID));
+
+    }
 }
