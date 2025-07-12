@@ -19,7 +19,7 @@
 - [Swagger API Docs](#-swagger-api-docs)
 - [Testing](#-testing)
 - [Live API Demo (cURL)](#-live-api-demo-curl)
-- [Deployment Highlights](#️-deployment-proof-screenshots)
+- [Deployment Highlights](#-deployment-highlights)
 - [Possible Improvements](#-possible-improvements-future-scope)
 - [Contributions](#-contributions)
 - [Contact](#-contact)
