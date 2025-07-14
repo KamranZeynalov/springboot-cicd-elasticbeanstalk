@@ -57,7 +57,7 @@ Runs on every pull request to `main`:
 ### 🚀 Deployment Workflow (`deploy.yml`)
 Triggered on `push` to `main`:
 1. Sends Slack notification for deployment start
-2. Builds project and runs tests
+2. Builds the project and runs tests
 3. Builds and pushes Docker image to AWS ECR
 4. Creates `Dockerrun.aws.json` and zips it
 5. Deploys to AWS Elastic Beanstalk
