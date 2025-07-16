@@ -109,7 +109,7 @@ Tested the deployment using terminal `curl` commands to verify end-to-end integr
 ---
 
 
-## 🖼️ Deployment Highlights
+## 📌 Deployment Highlights
 
 The following screenshots describes end-to-end deployment and configuration.
 
