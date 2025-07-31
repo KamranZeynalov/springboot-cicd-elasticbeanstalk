@@ -4,9 +4,11 @@
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-brightgreen)](https://spring.io/projects/spring-boot)
 [![Elastic Beanstalk](https://img.shields.io/badge/AWS%20Elastic%20Beanstalk-PaaS-FF9900?logo=amazon-aws&logoColor=white)](https://aws.amazon.com/elasticbeanstalk/)
 [![Parameter Store](https://img.shields.io/badge/AWS%20Parameter%20Store-Configuration-purple?logo=amazon-aws&logoColor=white)](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html)
-[![Amazon RDS](https://img.shields.io/badge/Amazon%20RDS-Relational%20Database-527FFF?logo=amazon-rds&logoColor=blue)](https://aws.amazon.com/rds/)
+[![Amazon RDS](https://img.shields.io/badge/Amazon%20RDS-Database-527FFF?logo=amazon-rds&logoColor=blue)](https://aws.amazon.com/rds/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-red)](https://www.postgresql.org/)
 [![Docker](https://img.shields.io/badge/Docker-enabled-blue)](https://www.docker.com/)
+[![Swagger](https://img.shields.io/badge/Swagger-API%20Docs-85EA2D?logo=swagger&logoColor=black)](https://swagger.io/)
+[![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-white?logo=github-actions&logoColor=white)](https://github.com/features/actions)
 [![Slack](https://img.shields.io/badge/Slack-Notifications-4A154B?logo=slack)](https://slack.com)
 
 > This project is a showcase of real-world CI/CD pipeline automation using GitHub Actions, Docker, and various AWS services — including Elastic Beanstalk, RDS, ECR, Parameter Store, IAM, and Slack integration.  
