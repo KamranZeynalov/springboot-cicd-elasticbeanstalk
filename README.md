@@ -2,6 +2,9 @@
 
 [![Java](https://img.shields.io/badge/Java-21-blue.svg)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-brightgreen)](https://spring.io/projects/spring-boot)
+[![Elastic Beanstalk](https://img.shields.io/badge/AWS%20Elastic%20Beanstalk-PaaS-FF9900?logo=amazon-aws&logoColor=white)](https://aws.amazon.com/elasticbeanstalk/)
+[![Parameter Store](https://img.shields.io/badge/AWS%20Parameter%20Store-Configuration-purple?logo=amazon-aws&logoColor=white)](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html)
+[![Amazon RDS](https://img.shields.io/badge/Amazon%20RDS-Relational%20Database-527FFF?logo=amazon-rds&logoColor=blue)](https://aws.amazon.com/rds/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-red)](https://www.postgresql.org/)
 [![Docker](https://img.shields.io/badge/Docker-enabled-blue)](https://www.docker.com/)
 [![Slack](https://img.shields.io/badge/Slack-Notifications-4A154B?logo=slack)](https://slack.com)
